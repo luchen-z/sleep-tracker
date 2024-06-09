@@ -6,16 +6,19 @@ import datetime
 
 users_records = {}
 
-
 def main():
     user_name = get_user_info()
+
+    sleep_record = get_sleep_info()
+
+    summarize_user(user_name, sleep_record)
+
+def get_sleep_info():
     date_recorded = get_date()
     sleep_time_recorded = get_sleep_time()
     wake_time_recorded = get_wake_time()
     quality_recorded = get_quality()
-    sleep_records = summarize_time(date_recorded, sleep_time_recorded, wake_time_recorded, quality_recorded)
-    # print_summary(user_name, date_recorded, sleep_time_recorded, wake_time_recorded, quality_recorded)
-    summarize_user(user_name, sleep_records)
+    return summarize_time(date_recorded, quality_recorded, sleep_time_recorded, wake_time_recorded)
 
 def get_user_info():
     user_id = input("Please type in your name: ")
