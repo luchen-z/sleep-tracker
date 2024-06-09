@@ -5,8 +5,6 @@
 import datetime
 
 users_records = {}
-sleep_records = {}
-sleep_times = []
 
 
 def main():
@@ -15,7 +13,7 @@ def main():
     sleep_time_recorded = get_sleep_time()
     wake_time_recorded = get_wake_time()
     quality_recorded = get_quality()
-    summarize_time(date_recorded, sleep_time_recorded, wake_time_recorded, quality_recorded)
+    sleep_records = summarize_time(date_recorded, sleep_time_recorded, wake_time_recorded, quality_recorded)
     # print_summary(user_name, date_recorded, sleep_time_recorded, wake_time_recorded, quality_recorded)
     summarize_user(user_name, sleep_records)
 
@@ -93,6 +91,9 @@ def get_additional_input():
 #         return sleep_total
 
 def summarize_time(date, sleep_time, wake_time, quality):
+    sleep_records = {}
+    sleep_times = []
+
     sleep_times.append(sleep_time)
     sleep_times.append(wake_time)
     sleep_times.append(quality)
