@@ -6,12 +6,14 @@ import datetime
 
 users_records = {}
 
+
 def main():
     user_name = get_user_info()
 
     sleep_record = get_sleep_info()
 
     summarize_user(user_name, sleep_record)
+
 
 def get_sleep_info():
     date_recorded = get_date()
@@ -20,10 +22,12 @@ def get_sleep_info():
     quality_recorded = get_quality()
     return summarize_time(date_recorded, quality_recorded, sleep_time_recorded, wake_time_recorded)
 
+
 def get_user_info():
     user_id = input("Please type in your name: ")
     print(user_id)
     return user_id
+
 
 def get_date():
     print("Please type in the date you would like to record...")
@@ -37,6 +41,7 @@ def get_date():
     print(formatted_date)
     return formatted_date
 
+
 def get_time():
     hour_to_record = int(input("Hour: "))
     minute_to_record = int(input("Minute: "))
@@ -44,11 +49,13 @@ def get_time():
     formatted_time = time_obj.strftime("%H:%M")
     return formatted_time
 
+
 def get_sleep_time():
     print("Please type in your sleep time...")
     sleep_time = get_time()
     print(sleep_time)
     return sleep_time
+
 
 def get_wake_time():
     print("Please type in your wake time...")
@@ -56,37 +63,48 @@ def get_wake_time():
     print(wake_time)
     return wake_time
 
+
 def get_quality():
-    sleep_quality = input("How did you feel after the sleep: (a) rested, (b) okay, or (c) tired? Please choose one: ")
+    sleep_quality = get_input_among_options(
+        "How did you feel after the sleep: (a) rested, (b) okay, or (c) tired? Please choose one: ",
+        ['a', 'b', 'c'])
+
+    if sleep_quality == "a":
+        sleep_quality = "rested"
+    elif sleep_quality == "b":
+        sleep_quality = "okay"
+    else:
+        sleep_quality = "tired"
+    print(sleep_quality)
+    return sleep_quality
+
+
+def get_input_among_options(message, options):
+    input_value = input(message)
     while True:
-        if sleep_quality  not in ['a', 'b', 'c']:
-            print("Please enter a, b, or c.")
-            sleep_quality = input("How did you feel after the sleep: (a) rested, (b) okay, or (c) tired? ")
+        if input_value not in options:
+            print(f"Please select one of the options: {options}")
+            input_value = input(message)
         else:
-            if sleep_quality == "a":
-                sleep_quality = "rested"
-            elif sleep_quality == "b":
-                sleep_quality = "okay"
-            else:
-                sleep_quality = "tired"
-            print(sleep_quality)
-            return sleep_quality
+            return input_value
+
 
 def get_additional_input():
     choice = input("Do you want to add more records (Y/N)? ")
     while True:
-            if choice not in ['Y', 'N']:
-                choice = input("Please input 'Y' or 'N'. ")
+        if choice not in ['Y', 'N']:
+            choice = input("Please input 'Y' or 'N'. ")
+        else:
+            if choice == 'Y':
+                date_added = get_date()
+                sleep_added = get_sleep_time()
+                wake_added = get_wake_time()
+                quality_added = get_quality()
+                print(date_added, sleep_added, wake_added, quality_added)
+                return date_added, sleep_added, wake_added, quality_added
             else:
-                if choice == 'Y':
-                    date_added = get_date()
-                    sleep_added = get_sleep_time()
-                    wake_added = get_wake_time()
-                    quality_added = get_quality()
-                    print(date_added, sleep_added, wake_added, quality_added)
-                    return date_added, sleep_added, wake_added, quality_added
-                else:
-                    print("Thank you!")
+                print("Thank you!")
+
 
 # def is_same_day(a, b):
 #     if a == b:
@@ -104,16 +122,17 @@ def summarize_time(date, sleep_time, wake_time, quality):
     print(sleep_records)
     return sleep_records
 
+
 def summarize_user(user, sleep_record):
     users_records[user] = sleep_record
     print(users_records)
     return users_records
 
+
 # def print_summary(a, b, c, d, e):
 #     # (create in other functions)
 #     # and store the data in a dictionary, and print the results via 'for' loop
 #     print(f"{a} had slept for xxx from {c} to {d} on {b}, and felt {e}.")
-
 
 
 # Press the green button in the gutter to run the script.
