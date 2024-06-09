@@ -10,19 +10,19 @@ users_records = {}
 def main():
     while has_sleep_info_to_record() == "Y":
         user_name = get_user_info()
-        sleep_record = get_sleep_info()
-        save_user_sleep_record(user_name, sleep_record)
+        get_sleep_info(user_name)
+        print(users_records)
 
-    print("Thank you")
+    print("Thank you.")
     exit()
 
 
-def get_sleep_info():
-    date_recorded = get_date()
-    sleep_time_recorded = get_sleep_time()
-    wake_time_recorded = get_wake_time()
+def get_sleep_info(user):
+    sleep_time_recorded = get_date_and_time("Sleep")
+    wake_time_recorded = get_date_and_time("Wake")
+    sleep_duration = get_duration(sleep_time_recorded, wake_time_recorded)
     quality_recorded = get_quality()
-    return summarize_time(date_recorded, quality_recorded, sleep_time_recorded, wake_time_recorded)
+    return summarize_time(user, sleep_time_recorded, wake_time_recorded, sleep_duration, quality_recorded)
 
 
 def get_user_info():
@@ -31,39 +31,28 @@ def get_user_info():
     return user_id
 
 
-def get_date():
-    print("Please type in the date you would like to record...")
-    year_to_record = int(input("Year: "))
-    month_to_record = int(input("Month: "))
-    day_to_record = int(input("Day: "))
-    # Create a date object
-    date_obj = datetime.date(year_to_record, month_to_record, day_to_record)
-    # Convert the date object to a string in yyyy-mm-dd format
-    formatted_date = date_obj.strftime("%Y-%m-%d")
-    print(formatted_date)
-    return formatted_date
+def get_date_and_time(prompt):
+    print("Please enter your " + str(prompt).lower() + " date and time...")
+    while True:
+        try:
+            date_str = input(prompt + " date (YYYY-MM-DD): ")
+            time_str = input(prompt + " time (HH:MM, in 24-h format): ")
+            datetime_str = date_str + " " + time_str
+            datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+            return datetime_obj
+        except ValueError:
+            print("Invalid date or time format. Please enter the date in YYYY-MM-DD and time in HH:MM format.")
 
 
-def get_time():
-    hour_to_record = int(input("Hour: "))
-    minute_to_record = int(input("Minute: "))
-    time_obj = datetime.time(hour_to_record, minute_to_record)
-    formatted_time = time_obj.strftime("%H:%M")
-    return formatted_time
-
-
-def get_sleep_time():
-    print("Please type in your sleep time...")
-    sleep_time = get_time()
-    print(sleep_time)
-    return sleep_time
-
-
-def get_wake_time():
-    print("Please type in your wake time...")
-    wake_time = get_time()
-    print(wake_time)
-    return wake_time
+def get_duration(sleep_time, wake_time):
+    # assuming a normal sleep duration < 24 hours;
+    # If end time is earlier in the day than start time, it means the sleep crosses midnight.
+    # if wake_time >= sleep_time:
+    #     pass
+    # else:
+    #     sleep_time = sleep_time - datetime.timedelta(days=1)
+    sleep_duration = wake_time - sleep_time
+    return sleep_duration
 
 
 def get_quality():
@@ -77,7 +66,6 @@ def get_quality():
         sleep_quality = "okay"
     else:
         sleep_quality = "tired"
-    print(sleep_quality)
     return sleep_quality
 
 
@@ -97,31 +85,33 @@ def has_sleep_info_to_record():
         ['Y', 'N'])
 
 
-# def is_same_day(a, b):
-#     if a == b:
-#         sleep_total =
-#         return sleep_total
+def summarize_time(user, sleep_time, wake_time, duration, quality):
 
+    sleep_date = sleep_time.strftime("%Y-%m-%d")
+    sleep_time = sleep_time.strftime("%H:%M")
+    wake_date = wake_time.strftime("%Y-%m-%d")
+    wake_time = wake_time.strftime("%H:%M")
 
-def summarize_time(date, sleep_time, wake_time, quality):
-    sleep_records = {}
-    sleep_times = [sleep_time, wake_time, quality]
+    duration = duration.total_seconds() / 3600
+    duration_formatted = f"{duration:.2f}" + " hours"
 
-    sleep_records[date] = sleep_times
-    # print(sleep_records)
-    return sleep_records
+    sleep_record = {"sleep_date": sleep_date, "sleep_time": sleep_time,
+                    "wake_date": wake_date, "wake_time": wake_time,
+                    "duration": duration_formatted, "quality": quality}
 
+    if user not in users_records:
+        users_records[user] = []
+        users_records[user].append(sleep_record)
+    else:
+        users_records[user].append(sleep_record)
 
-def save_user_sleep_record(user, sleep_record):
-    users_records[user] = sleep_record
-    print(users_records)
     return users_records
 
 
-# def print_summary(a, b, c, d, e):
-#     # (create in other functions)
-#     # and store the data in a dictionary, and print the results via 'for' loop
-#     print(f"{a} had slept for xxx from {c} to {d} on {b}, and felt {e}.")
+# def save_user_sleep_record(user, sleep_record):
+#     users_records[user] = sleep_record
+#     print(users_records)
+#     return users_records
 
 
 # Press the green button in the gutter to run the script.
