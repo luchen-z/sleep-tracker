@@ -8,11 +8,13 @@ users_records = {}
 
 
 def main():
-    user_name = get_user_info()
+    while has_sleep_info_to_record() == "Y":
+        user_name = get_user_info()
+        sleep_record = get_sleep_info()
+        save_user_sleep_record(user_name, sleep_record)
 
-    sleep_record = get_sleep_info()
-
-    summarize_user(user_name, sleep_record)
+    print("Thank you")
+    exit()
 
 
 def get_sleep_info():
@@ -89,21 +91,10 @@ def get_input_among_options(message, options):
             return input_value
 
 
-def get_additional_input():
-    choice = input("Do you want to add more records (Y/N)? ")
-    while True:
-        if choice not in ['Y', 'N']:
-            choice = input("Please input 'Y' or 'N'. ")
-        else:
-            if choice == 'Y':
-                date_added = get_date()
-                sleep_added = get_sleep_time()
-                wake_added = get_wake_time()
-                quality_added = get_quality()
-                print(date_added, sleep_added, wake_added, quality_added)
-                return date_added, sleep_added, wake_added, quality_added
-            else:
-                print("Thank you!")
+def has_sleep_info_to_record():
+    return get_input_among_options(
+        "Hi, I hope you had a wonderful sleep. Do you want to record your sleep stats into our system (Y/N)? ",
+        ['Y', 'N'])
 
 
 # def is_same_day(a, b):
@@ -111,19 +102,17 @@ def get_additional_input():
 #         sleep_total =
 #         return sleep_total
 
+
 def summarize_time(date, sleep_time, wake_time, quality):
     sleep_records = {}
-    sleep_times = []
+    sleep_times = [sleep_time, wake_time, quality]
 
-    sleep_times.append(sleep_time)
-    sleep_times.append(wake_time)
-    sleep_times.append(quality)
     sleep_records[date] = sleep_times
-    print(sleep_records)
+    # print(sleep_records)
     return sleep_records
 
 
-def summarize_user(user, sleep_record):
+def save_user_sleep_record(user, sleep_record):
     users_records[user] = sleep_record
     print(users_records)
     return users_records
