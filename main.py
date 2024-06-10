@@ -1,20 +1,23 @@
 import pprint
 
-from data_storage import save_to_json, read_json_file
-from user_interface import get_sleep_info, get_user_info, has_sleep_info_to_record, summarize_sleep
+from data_storage import save_to_json_file, read_json_file
+from user_interface import get_sleep_info, get_user_info, more_sleep_info_to_record, summarize_sleep
 
 
 def main():
     users_records = read_json_file()
     user_name = get_user_info()
 
-    while has_sleep_info_to_record() == "Y":
+    while True:
         sleep_info = get_sleep_info()
         save_sleep_info(sleep_info, user_name, users_records)
+        users_records = save_to_json_file(users_records)
         pprint.pp(users_records)
 
-    save_to_json(users_records)
-    print("Thank you.")
+        if more_sleep_info_to_record() == "N":
+            break
+
+    print("\nThank you.")
     exit()
 
 
