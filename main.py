@@ -4,6 +4,7 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import datetime
 import pprint
+import json
 
 users_records = {}
 
@@ -14,6 +15,7 @@ def main():
         get_sleep_info(user_name)
         pprint.pp(users_records)
 
+    save_to_json(users_records)
     print("Thank you.")
     exit()
 
@@ -61,12 +63,7 @@ def get_date_and_time(prompt):
 
 
 def get_duration(sleep_time, wake_time):
-    # assuming a normal sleep duration < 24 hours;
-    # If the sleep crosses midnight, we will record two blocks of duration set apart by midnight
-    # if wake_time >= sleep_time:
-    #     pass
-    # else:
-    #     sleep_time = sleep_time - datetime.timedelta(days=1)
+    # assuming a normal sleep duration < 24 hours
     sleep_duration = wake_time - sleep_time
     duration_in_hours = sleep_duration.total_seconds() / 3600
     duration_formatted = f"{duration_in_hours:.2f}" + " hours"
@@ -124,8 +121,12 @@ def summarize_sleep(user, sleep_time, wake_time, quality):
     return users_records
 
 
+def save_to_json(users_records):
+    with open('sleep_tracker_data.json', 'w') as f:
+        json.dump(users_records, f)
 
-# Press the green button in the gutter to run the script.
+
+
 if __name__ == '__main__':
     main()
 
