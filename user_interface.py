@@ -1,6 +1,8 @@
 import datetime
 import pprint
 
+from data_storage import read_user_name, save_user_name
+
 
 def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
     if sleep_time_recorded.date() != wake_time_recorded.date():
@@ -24,8 +26,15 @@ def get_sleep_info():
 
 
 def get_user_info():
-    user_id = input("Please type in your name: ")
-    return user_id.strip()
+    user_name = read_user_name()
+    print(f"Welcome back, {user_name}!")
+
+    new_user_name = input(f"If you are not {user_name}, please type in your name, otherwise just press Enter: ").strip()
+    if not new_user_name:
+        return user_name
+    else:
+        save_user_name(new_user_name)
+        return new_user_name
 
 
 def get_date_and_time(prompt):
@@ -80,7 +89,6 @@ def has_sleep_info_to_record():
 
 
 def summarize_sleep(users_records, user, sleep_time, wake_time, quality):
-
     sleep_date_str = sleep_time.strftime("%Y-%m-%d")
     sleep_time_str = sleep_time.strftime("%H:%M")
     wake_time_str = wake_time.strftime("%H:%M")
