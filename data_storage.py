@@ -4,30 +4,43 @@ import pprint
 
 from utils import sort_nested_dict
 
-FILENAME = 'data/sleep_tracker_data.json'
-CONFIG_FILE = 'data/user_config.json'
+SLEEP_DATA_DIRECTORY = 'data_store/sleep_data'
+CONFIG_FILE = 'data_store/user_config.json'
 
 
+# Function to save user records to separate JSON files
 def save_to_json_file(users_records):
-    sorted_data = sort_nested_dict(users_records)
-    with open(FILENAME, 'w') as f:
-        json.dump(sorted_data, f, indent=4)
-    return sorted_data
+    directory = SLEEP_DATA_DIRECTORY
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    users_records = sort_nested_dict(users_records)
+
+    for user, records in users_records.items():
+        filename = os.path.join(directory, f"{user}.json")
+        with open(filename, 'w') as f:
+            json.dump(records, f, indent=4)
+    return users_records
 
 
+# Function to read all user JSON files and combine them into a single dictionary
 def read_json_file():
-    if not os.path.exists(FILENAME):
-        # Ensure the directory for the file exists
-        os.makedirs(os.path.dirname(FILENAME), exist_ok=True)
-        # Create an empty file
-        with open(FILENAME, 'w') as file:
-            json.dump({}, file)
+    directory = SLEEP_DATA_DIRECTORY
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    with open(FILENAME) as fp:
-        data_loaded = json.load(fp)
-    data_loaded = sort_nested_dict(data_loaded)
-    pprint.pp(data_loaded)
-    return data_loaded
+    all_data = {}
+
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            user = filename[:-5]  # Remove the .json extension to get the user name
+            filepath = os.path.join(directory, filename)
+            with open(filepath) as fp:
+                data_loaded = json.load(fp)
+                all_data[user] = sort_nested_dict(data_loaded)
+
+    pprint.pp(all_data)
+    return all_data
 
 
 def read_user_name():
