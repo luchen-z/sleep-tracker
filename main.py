@@ -3,6 +3,7 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import datetime
+import pprint
 
 users_records = {}
 
@@ -11,7 +12,7 @@ def main():
     while has_sleep_info_to_record() == "Y":
         user_name = get_user_info()
         get_sleep_info(user_name)
-        print(users_records)
+        pprint.pp(users_records)
 
     print("Thank you.")
     exit()
@@ -122,11 +123,6 @@ def summarize_sleep(user, sleep_time, wake_time, duration, quality):
 
     return users_records
 
-
-# def save_user_sleep_record(user, sleep_record):
-#     users_records[user] = sleep_record
-#     print(users_records)
-#     return users_records
 
 
 # Press the green button in the gutter to run the script.
