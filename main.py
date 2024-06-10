@@ -18,12 +18,28 @@ def main():
     exit()
 
 
+def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
+    if sleep_time_recorded.date() != wake_time_recorded.date():
+        intermediate_time = wake_time_recorded.replace(hour=0, minute=0)
+        return [[sleep_time_recorded, intermediate_time],
+                [intermediate_time, wake_time_recorded]]
+    else:
+        return [[sleep_time_recorded, wake_time_recorded]]
+
+
 def get_sleep_info(user):
+    # Input phase
     sleep_time_recorded = get_date_and_time("Sleep")
     wake_time_recorded = get_date_and_time("Wake")
-    sleep_duration = get_duration(sleep_time_recorded, wake_time_recorded)
     quality_recorded = get_quality()
-    return summarize_sleep(user, sleep_time_recorded, wake_time_recorded, sleep_duration, quality_recorded)
+
+    # Split the sleep record if it is overnight
+    sleep_records = split_record_if_overnight(sleep_time_recorded, wake_time_recorded)
+
+    # Save the sleep record(s) in to data structure
+    for record in sleep_records:
+        sleep_duration = get_duration(record[0], record[1])
+        summarize_sleep(user, record[0], record[1], sleep_duration, quality_recorded)
 
 
 def get_user_info():
@@ -93,22 +109,10 @@ def summarize_sleep(user, sleep_time, wake_time, duration, quality):
     wake_date_str = wake_time.strftime("%Y-%m-%d")
     wake_time_str = wake_time.strftime("%H:%M")
 
-    if sleep_time.date() != wake_time.date():
-        intermediate_time = wake_time.replace(hour=0, minute=0)
-        pre_mid_duration = (intermediate_time - sleep_time).total_seconds() / 3600
-        post_mid_duration = (wake_time - intermediate_time).total_seconds() / 3600
-        pre_mid_duration_formatted = f"{pre_mid_duration:.2f}" + " hours"
-        post_mid_duration_formatted = f"{post_mid_duration:.2f}" + " hours"
+    duration = duration.total_seconds() / 3600
+    duration_formatted = f"{duration:.2f}" + " hours"
 
-        intermediate_time_str = intermediate_time.strftime("%H:%M")
-
-        sleep_record = {sleep_date_str: [[sleep_time_str, intermediate_time_str, pre_mid_duration_formatted, quality]],
-                        wake_date_str: [[intermediate_time_str, wake_time_str, post_mid_duration_formatted, quality]]}
-    else:
-        duration = duration.total_seconds() / 3600
-        duration_formatted = f"{duration:.2f}" + " hours"
-
-        sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, duration_formatted, quality]]}
+    sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, duration_formatted, quality]]}
 
     if user not in users_records:
         users_records[user] = {}
