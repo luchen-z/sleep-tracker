@@ -22,7 +22,7 @@ def get_sleep_info(user):
     wake_time_recorded = get_date_and_time("Wake")
     sleep_duration = get_duration(sleep_time_recorded, wake_time_recorded)
     quality_recorded = get_quality()
-    return summarize_time(user, sleep_time_recorded, wake_time_recorded, sleep_duration, quality_recorded)
+    return summarize_sleep(user, sleep_time_recorded, wake_time_recorded, sleep_duration, quality_recorded)
 
 
 def get_user_info():
@@ -46,7 +46,7 @@ def get_date_and_time(prompt):
 
 def get_duration(sleep_time, wake_time):
     # assuming a normal sleep duration < 24 hours;
-    # If end time is earlier in the day than start time, it means the sleep crosses midnight.
+    # If the sleep crosses midnight, we will record two blocks of duration set apart by midnight
     # if wake_time >= sleep_time:
     #     pass
     # else:
@@ -85,25 +85,40 @@ def has_sleep_info_to_record():
         ['Y', 'N'])
 
 
-def summarize_time(user, sleep_time, wake_time, duration, quality):
+def summarize_sleep(user, sleep_time, wake_time, duration, quality):
 
-    sleep_date = sleep_time.strftime("%Y-%m-%d")
-    sleep_time = sleep_time.strftime("%H:%M")
-    wake_date = wake_time.strftime("%Y-%m-%d")
-    wake_time = wake_time.strftime("%H:%M")
+    sleep_date_str = sleep_time.strftime("%Y-%m-%d")
+    sleep_time_str = sleep_time.strftime("%H:%M")
+    wake_date_str = wake_time.strftime("%Y-%m-%d")
+    wake_time_str = wake_time.strftime("%H:%M")
 
-    duration = duration.total_seconds() / 3600
-    duration_formatted = f"{duration:.2f}" + " hours"
+    if sleep_time.date() != wake_time.date():
+        intermediate_time = wake_time.replace(hour=0, minute=0)
+        pre_mid_duration = (intermediate_time - sleep_time).total_seconds() / 3600
+        post_mid_duration = (wake_time - intermediate_time).total_seconds() / 3600
+        pre_mid_duration_formatted = f"{pre_mid_duration:.2f}" + " hours"
+        post_mid_duration_formatted = f"{post_mid_duration:.2f}" + " hours"
 
-    sleep_record = {"sleep_date": sleep_date, "sleep_time": sleep_time,
-                    "wake_date": wake_date, "wake_time": wake_time,
-                    "duration": duration_formatted, "quality": quality}
+        intermediate_time_str = intermediate_time.strftime("%H:%M")
+
+        sleep_record = {sleep_date_str: [[sleep_time_str, intermediate_time_str, pre_mid_duration_formatted, quality]],
+                        wake_date_str: [[intermediate_time_str, wake_time_str, post_mid_duration_formatted, quality]]}
+    else:
+        duration = duration.total_seconds() / 3600
+        duration_formatted = f"{duration:.2f}" + " hours"
+
+        sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, duration_formatted, quality]]}
 
     if user not in users_records:
-        users_records[user] = []
-        users_records[user].append(sleep_record)
+        users_records[user] = {}
+        users_records[user].update(sleep_record)
     else:
-        users_records[user].append(sleep_record)
+        if sleep_date_str in users_records[user].keys():
+            users_records[user][sleep_date_str].extend(sleep_record[sleep_date_str])
+        elif wake_date_str in users_records[user].keys():
+            users_records[user][wake_date_str].extend(sleep_record[wake_date_str])
+        else:
+            users_records[user].update(sleep_record)
 
     return users_records
 
