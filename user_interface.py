@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import pprint
 
 from data_storage import read_user_name, save_user_name
@@ -16,7 +16,7 @@ def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
 def get_sleep_info():
     # Input phase
     sleep_time_recorded = get_date_and_time("Sleep")
-    wake_time_recorded = get_date_and_time("Wake")
+    wake_time_recorded = get_date_and_time("Wake-Up")
     quality_recorded = get_quality()
 
     # Split the sleep record if it is overnight
@@ -38,16 +38,58 @@ def get_user_info():
 
 
 def get_date_and_time(prompt):
+    print("")
     print("Please enter your " + str(prompt).lower() + " date and time...")
     while True:
         try:
-            date_str = input(prompt + " date (YYYY-MM-DD): ")
-            time_str = input(prompt + " time (HH:MM, in 24-h format): ")
-            datetime_str = date_str + " " + time_str
-            datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
-            return datetime_obj
+            date = get_date_with_shortcuts(prompt)
+            time = get_time(prompt)
+            return datetime.combine(date, time)
         except ValueError:
             print("Invalid date or time format. Please enter the date in YYYY-MM-DD and time in HH:MM format.")
+
+
+def get_date_with_shortcuts(prompt):
+
+    today = datetime.today().date()
+    shortcuts = {
+        '0': today,
+        '1': today - timedelta(days=1),
+        '2': today - timedelta(days=2),
+        '3': today - timedelta(days=3),
+        '4': today - timedelta(days=4),
+        '5': today - timedelta(days=5),
+        '6': today - timedelta(days=6),
+    }
+
+    shortcuts_msg = "Shortcuts:\n"
+    for key, date in shortcuts.items():
+        shortcuts_msg += f"[{key}] {date.strftime('%m-%d')}, "
+    shortcuts_msg = shortcuts_msg[:-2]
+
+    print(shortcuts_msg)
+    date_str = input(prompt + " date (YYYY-MM-DD): ")
+
+    # Check if the input matches any of the shortcuts
+    if date_str in shortcuts:
+        return shortcuts[date_str]
+
+    # Otherwise, try to parse the input as a date
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        raise ValueError("Invalid date format. Please use YYYY-MM-DD or a valid shortcut.")
+
+
+def get_time(prompt):
+    time_str = input(prompt + " time (HHMM, in 24-h format): ")
+    if len(time_str) == 4 and time_str.isdigit():
+        try:
+            return datetime.strptime(time_str, "%H%M").time()
+        except ValueError:
+            raise ValueError("Invalid time format. Please use HHMM.")
+    else:
+        raise ValueError("Invalid time format. Please use HHMM.")
 
 
 def get_duration(sleep_time, wake_time):
@@ -83,8 +125,10 @@ def get_input_among_options(message, options):
 
 
 def has_sleep_info_to_record():
+    print()
+    print("Hi, I hope you had a wonderful sleep.")
     return get_input_among_options(
-        "Hi, I hope you had a wonderful sleep. Do you want to record your sleep stats into our system (Y/N)? ",
+        "Do you want to record your sleep stats into our system (Y/N)? ",
         ['Y', 'N'])
 
 
