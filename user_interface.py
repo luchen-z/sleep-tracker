@@ -1,7 +1,9 @@
-from datetime import datetime, timedelta
 import pprint
+from datetime import datetime, timedelta
+from bisect import insort
 
 from data_storage import read_user_name, save_user_name
+from utils import sort_nested_dict
 
 
 def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
@@ -27,9 +29,10 @@ def get_sleep_info():
 
 def get_user_info():
     user_name = read_user_name()
+    print("")
     print(f"Welcome back, {user_name}!")
 
-    new_user_name = input(f"If you are not {user_name}, please type in your name, otherwise just press Enter: ").strip()
+    new_user_name = input(f"If you are {user_name}, just press ENTER. If not, please type in your name: ").strip()
     if not new_user_name:
         return user_name
     else:
@@ -102,7 +105,7 @@ def get_duration(sleep_time, wake_time):
 
 def get_quality():
     sleep_quality = get_input_among_options(
-        "How did you feel after the sleep: (a) rested, (b) okay, or (c) tired? Please choose one: ",
+        "\nHow did you feel after the sleep: (a) rested, (b) okay, or (c) tired? Please choose one: ",
         ['a', 'b', 'c'])
 
     if sleep_quality == "a":
@@ -124,11 +127,11 @@ def get_input_among_options(message, options):
             return input_value
 
 
-def has_sleep_info_to_record():
+def more_sleep_info_to_record():
     print()
-    print("Hi, I hope you had a wonderful sleep.")
+    print("I hope you had a great night's sleep.")
     return get_input_among_options(
-        "Do you want to record your sleep stats into our system (Y/N)? ",
+        "Would you like to add more of your sleep data to our system (Y/N)?",
         ['Y', 'N'])
 
 
@@ -155,7 +158,10 @@ def summarize_sleep(users_records, user, sleep_time, wake_time, quality):
     else:
         if sleep_date_str in users_records[user].keys():
             users_records[user][sleep_date_str].extend(sleep_record[sleep_date_str])
+            users_records[user][sleep_date_str] = sorted(users_records[user][sleep_date_str])
         else:
             users_records[user].update(sleep_record)
+
+    users_records = sort_nested_dict(users_records)
 
     return users_records

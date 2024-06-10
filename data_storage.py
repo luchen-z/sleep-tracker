@@ -2,13 +2,17 @@ import json
 import os
 import pprint
 
+from utils import sort_nested_dict
+
 FILENAME = 'data/sleep_tracker_data.json'
 CONFIG_FILE = 'data/user_config.json'
 
 
-def save_to_json(users_records):
+def save_to_json_file(users_records):
+    sorted_data = sort_nested_dict(users_records)
     with open(FILENAME, 'w') as f:
-        json.dump(users_records, f, indent=4)
+        json.dump(sorted_data, f, indent=4)
+    return sorted_data
 
 
 def read_json_file():
@@ -21,6 +25,7 @@ def read_json_file():
 
     with open(FILENAME) as fp:
         data_loaded = json.load(fp)
+    data_loaded = sort_nested_dict(data_loaded)
     pprint.pp(data_loaded)
     return data_loaded
 
