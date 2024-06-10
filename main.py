@@ -38,8 +38,7 @@ def get_sleep_info(user):
 
     # Save the sleep record(s) in to data structure
     for record in sleep_records:
-        sleep_duration = get_duration(record[0], record[1])
-        summarize_sleep(user, record[0], record[1], sleep_duration, quality_recorded)
+        summarize_sleep(user, record[0], record[1], quality_recorded)
 
 
 def get_user_info():
@@ -69,7 +68,9 @@ def get_duration(sleep_time, wake_time):
     # else:
     #     sleep_time = sleep_time - datetime.timedelta(days=1)
     sleep_duration = wake_time - sleep_time
-    return sleep_duration
+    duration_in_hours = sleep_duration.total_seconds() / 3600
+    duration_formatted = f"{duration_in_hours:.2f}" + " hours"
+    return duration_formatted
 
 
 def get_quality():
@@ -102,26 +103,21 @@ def has_sleep_info_to_record():
         ['Y', 'N'])
 
 
-def summarize_sleep(user, sleep_time, wake_time, duration, quality):
+def summarize_sleep(user, sleep_time, wake_time, quality):
 
     sleep_date_str = sleep_time.strftime("%Y-%m-%d")
     sleep_time_str = sleep_time.strftime("%H:%M")
-    wake_date_str = wake_time.strftime("%Y-%m-%d")
     wake_time_str = wake_time.strftime("%H:%M")
 
-    duration = duration.total_seconds() / 3600
-    duration_formatted = f"{duration:.2f}" + " hours"
+    duration_formatted = get_duration(sleep_time, wake_time)
 
     sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, duration_formatted, quality]]}
-
     if user not in users_records:
         users_records[user] = {}
         users_records[user].update(sleep_record)
     else:
         if sleep_date_str in users_records[user].keys():
             users_records[user][sleep_date_str].extend(sleep_record[sleep_date_str])
-        elif wake_date_str in users_records[user].keys():
-            users_records[user][wake_date_str].extend(sleep_record[wake_date_str])
         else:
             users_records[user].update(sleep_record)
 
