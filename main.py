@@ -6,13 +6,13 @@ import datetime
 import pprint
 import json
 
-users_records = {}
-
 
 def main():
+    users_records = read_json_file('sleep_tracker_data.json')
+
     while has_sleep_info_to_record() == "Y":
         user_name = get_user_info()
-        get_sleep_info(user_name)
+        get_sleep_info(user_name, users_records)
         pprint.pp(users_records)
 
     save_to_json(users_records)
@@ -29,7 +29,7 @@ def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
         return [[sleep_time_recorded, wake_time_recorded]]
 
 
-def get_sleep_info(user):
+def get_sleep_info(user, users_records):
     # Input phase
     sleep_time_recorded = get_date_and_time("Sleep")
     wake_time_recorded = get_date_and_time("Wake")
@@ -40,12 +40,11 @@ def get_sleep_info(user):
 
     # Save the sleep record(s) in to data structure
     for record in sleep_records:
-        summarize_sleep(user, record[0], record[1], quality_recorded)
+        summarize_sleep(users_records, user, record[0], record[1], quality_recorded)
 
 
 def get_user_info():
     user_id = input("Please type in your name: ")
-    print(user_id)
     return user_id
 
 
@@ -100,7 +99,7 @@ def has_sleep_info_to_record():
         ['Y', 'N'])
 
 
-def summarize_sleep(user, sleep_time, wake_time, quality):
+def summarize_sleep(users_records, user, sleep_time, wake_time, quality):
 
     sleep_date_str = sleep_time.strftime("%Y-%m-%d")
     sleep_time_str = sleep_time.strftime("%H:%M")
@@ -123,8 +122,14 @@ def summarize_sleep(user, sleep_time, wake_time, quality):
 
 def save_to_json(users_records):
     with open('sleep_tracker_data.json', 'w') as f:
-        json.dump(users_records, f)
+        json.dump(users_records, f, indent=4)
 
+
+def read_json_file(filename):
+    with open(filename) as fp:
+        data_loaded = json.load(fp)
+    pprint.pp(data_loaded)
+    return data_loaded
 
 
 if __name__ == '__main__':
