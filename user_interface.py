@@ -57,13 +57,13 @@ def get_date_with_shortcuts(prompt):
 
     today = datetime.today().date()
     shortcuts = {
-        '0': today,
-        '1': today - timedelta(days=1),
-        '2': today - timedelta(days=2),
-        '3': today - timedelta(days=3),
-        '4': today - timedelta(days=4),
-        '5': today - timedelta(days=5),
-        '6': today - timedelta(days=6),
+        '7': today - timedelta(days=6),
+        '6': today - timedelta(days=5),
+        '5': today - timedelta(days=4),
+        '4': today - timedelta(days=3),
+        '3': today - timedelta(days=2),
+        '2': today - timedelta(days=1),
+        '1': today,
     }
 
     shortcuts_msg = "Shortcuts:\n"
@@ -132,7 +132,7 @@ def more_sleep_info_to_record():
     print()
     print("I hope you had a great night's sleep.")
     return get_input_among_options(
-        "Would you like to add more of your sleep data to our system (Y/N)?",
+        "Would you like to add more of your sleep data to our system (Y/N)? ",
         ['Y', 'N'])
 
 
