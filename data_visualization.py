@@ -19,8 +19,8 @@ df = pd.DataFrame([
 
 # Convert date and time strings to datetime objects
 df['date'] = pd.to_datetime(df['date'])
-df['start_time'] = pd.to_datetime(df['start_time']).dt.time
-df['end_time'] = pd.to_datetime(df['end_time']).dt.time
+df['start_time'] = pd.to_datetime(df['start_time'], format='%H:%M').dt.time
+df['end_time'] = pd.to_datetime(df['end_time'], format='%H:%M').dt.time
 
 # Helper function to convert time to hours
 def time_to_hours(t):
