@@ -1,19 +1,23 @@
 import json
-
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from data_storage import read_json_file
 
-filepath = 'data_store/sleep_data/Luchen.json'
 
-with open(filepath) as fp:
-    data_loaded = json.load(fp)
-    print(data_loaded)
+# filepath = 'data_store/sleep_data/Luchen.json'
+#
+# with open(filepath) as fp:
+#     data_loaded = json.load(fp)
+#     print(data_loaded)
+
+data_loaded = read_json_file()
 
 # Convert data to DataFrame
 df = pd.DataFrame([
     [date, entry[0], entry[1], entry[2], entry[3]]
-    for date, entries in data_loaded.items()
+    for user in data_loaded.keys()
+    for date, entries in data_loaded[user].items()
     for entry in entries
 ], columns=['date', 'start_time', 'end_time', 'duration', 'quality'])
 
