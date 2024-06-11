@@ -8,9 +8,10 @@ from utils import sort_nested_dict
 
 def split_record_if_overnight(sleep_time_recorded, wake_time_recorded):
     if sleep_time_recorded.date() != wake_time_recorded.date():
-        intermediate_time = wake_time_recorded.replace(hour=0, minute=0)
-        return [[sleep_time_recorded, intermediate_time],
-                [intermediate_time, wake_time_recorded]]
+        intermediate_time_1 = sleep_time_recorded.replace(hour=23, minute=59)
+        intermediate_time_2 = wake_time_recorded.replace(hour=0, minute=0)
+        return [[sleep_time_recorded, intermediate_time_1],
+                [intermediate_time_2, wake_time_recorded]]
     else:
         return [[sleep_time_recorded, wake_time_recorded]]
 
