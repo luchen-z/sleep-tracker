@@ -21,7 +21,7 @@ for user in data_loaded.keys():
 
     # Extract month and day for separate columns
     df['month'] = df['date'].dt.strftime('%Y-%m')
-    df['day'] = df['date'].dt.day
+    df['day'] = df['date'].dt.strftime('%m/%d')
 
     # Group data by month
     grouped = df.groupby('month')
@@ -30,43 +30,45 @@ for user in data_loaded.keys():
     def time_to_hours(t):
         return t.hour + t.minute / 60
 
-
     df['start_hour'] = df['start_time'].apply(time_to_hours)
     df['end_hour'] = df['end_time'].apply(time_to_hours)
 
     # Define colors based on quality
     quality_colors = {
-        'rested': '#398564',
-        'okay': '#47B649',
-        'tired': '#A6DBBC'
+        'rested': '#47B649',  # Base green
+        'okay': '#90d391',  # Lighter green
+        'tired': '#c7e9c8'  # Lightest green
     }
 
     # Plotting
     for month, month_df in grouped:
         fig, ax = plt.subplots(figsize=(10, 6))
 
+        # Add reference time frame
+        ax.axhspan(1, 9.5, facecolor='#e9e9e9', alpha=0.5, zorder=0)
+
         # Plot bars
-        for idx, row in df.iterrows():
+        for idx, row in month_df.iterrows():
             ax.bar(row['day'], row['end_hour'] - row['start_hour'], bottom=row['start_hour'],
-                   color=quality_colors[row['quality']], edgecolor='black')
+                   color=quality_colors[row['quality']])
 
         # Formatting the plot
         ax.set_ylim(24, 0)
-        ax.set_xlim(1, month_df['day'].max() + 1)  # Set x-axis limits to the number of days in the month
+        ax.set_xlim(-0.5, len(month_df['day'].unique()) - 0.5)  # Set x-axis limits to the number of days in the month
         ax.set_ylabel('Time (hour)')
-        ax.set_xlabel('Day')
         ax.set_title(f'Sleep Records for {user} in {month}')
 
         ax.set_yticks(range(25))
         ax.set_yticklabels(range(25))
-        ax.set_xticks(range(month_df['day'].max() + 1))
-        ax.set_xticklabels(range(month_df['day'].max() + 1))
+        ax.set_xticks(range(len(month_df['day'].unique())))
+        ax.set_xticklabels(month_df['day'].unique(), rotation=45)
 
         # Adding a legend
         handles = [plt.Line2D([0], [0], color=color, lw=3) for color in quality_colors.values()]
         labels = quality_colors.keys()
         ax.legend(handles, labels, title='Quality')
 
+        plt.tight_layout()
         plt.show()
 
         # Save the figure
