@@ -69,10 +69,12 @@ for user in data_loaded.keys():
         ax.legend(handles, labels, title='Quality')
 
         plt.tight_layout()
-        plt.show()
-
         # Save the figure
-        SLEEP_DATA_DIRECTORY = 'data_store/sleep_data'
+        SLEEP_DATA_DIRECTORY = 'data_store/generated'
+        if not os.path.exists(SLEEP_DATA_DIRECTORY):
+            os.makedirs(SLEEP_DATA_DIRECTORY)
         filename = f'sleep_patterns_{user}_{month}.png'
         plt.savefig(os.path.join(SLEEP_DATA_DIRECTORY, filename))
+
+        plt.show()
         plt.close()
