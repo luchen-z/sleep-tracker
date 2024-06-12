@@ -1,3 +1,4 @@
 .idea
 __pycache__
 data_store/user_config.json
+data_store/generated
