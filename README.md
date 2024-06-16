@@ -1,4 +1,11 @@
-# Luchen's Sleep Tracker
+# A Sleep Tracker
+
+## 0. Credits
+This project marks the culmination of my learning journey with "Code in Place 2024". I extend my heartfelt gratitude to the amazing teaching team.
+
+I am especially grateful to Bryce for his invaluable suggestions and help in executing and assembling this project.
+
+While there are additional features I plan to incorporate, due to time constraints and other commitments, this is not the final version. Stay tuned for future updates!
 
 ## 1. Introduction
 
@@ -23,7 +30,7 @@ The Sleep Tracker program aims to provide an interactive tool for users to monit
 ### 3.2 Data Structure
 
 - The internal data structure should be able to store each user's input information in an organized way separately. (P0)
-- The data structure should be easy to convert to exteral storage. (P0)
+- The data structure should be easy to convert to external storage. (P0)
 
 ### 3.3 Data Storage
 
@@ -63,26 +70,12 @@ The Sleep Tracker program aims to provide an interactive tool for users to monit
 - Manages the storage and retrieval of sleep data
 - Ensures data is stored in a structured format (e.g., CSV, JSON).
 
-### 5.3 Data Analysis Module (P2)
-
-- Processes the sleep data to calculate total sleep hours and identify patterns.
-- Provides functions for summarizing and analyzing data over different periods.
-
-### 5.4 Data Visualization Module (P1)
+### 5.3 Data Visualization Module (P1)
 
 - Generates visual representations of sleep data.
 - Provides functions for creating charts and tables to display trends.
 
-## 6. Detailed Design
+### 5.4 Data Analysis Module (planned)
 
-### 6.1 User Interface Module
-
-- **Functions:**
-  - `get_user_info()`
-  - `get_date()`
-  - `get_sleep_time()`
-  - `get_wake_time()`
-  - `get_sleep_quality()`
-  
-### 6.2 User Interface Module
-- Use 'dictionary' as the major data structure, where `date` serves as the 'key', and list of input times (e.g., \[\[sleep_time_1, wake_time_1\], \[sleep_time_2, wake_time_2\], \[sleep_time_3, wake_time_3\]\]) as the 'value'.
+- Processes the sleep data to calculate total sleep hours and identify patterns.
+- Provides functions for summarizing and analyzing data over different periods.
