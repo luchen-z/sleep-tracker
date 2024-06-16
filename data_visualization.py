@@ -9,10 +9,10 @@ data_loaded = read_json_file()
 # Convert data to DataFrame
 for user in data_loaded.keys():
     df = pd.DataFrame([
-        [date, entry[0], entry[1], entry[2], entry[3]]
+        [date, entry[0], entry[1], entry[2]]
         for date, entries in data_loaded[user].items()
         for entry in entries
-    ], columns=['date', 'start_time', 'end_time', 'duration', 'quality'])
+    ], columns=['date', 'start_time', 'end_time', 'quality'])
 
     # Convert date and time strings to datetime objects
     df['date'] = pd.to_datetime(df['date'])

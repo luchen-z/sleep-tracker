@@ -1,6 +1,4 @@
-import pprint
 from datetime import datetime, timedelta
-from bisect import insort
 
 from data_storage import read_user_name, save_user_name
 from utils import sort_nested_dict
@@ -96,14 +94,6 @@ def get_time(prompt):
         raise ValueError("Invalid time format. Please use HHMM.")
 
 
-def get_duration(sleep_time, wake_time):
-    # assuming a normal sleep duration < 24 hours
-    sleep_duration = wake_time - sleep_time
-    duration_in_hours = sleep_duration.total_seconds() / 3600
-    duration_formatted = f"{duration_in_hours:.2f}" + " hours"
-    return duration_formatted
-
-
 def get_quality():
     sleep_quality = get_input_among_options(
         "\nHow did you feel after the sleep: (a) rested, (b) okay, or (c) tired? Please choose one: ",
@@ -141,17 +131,7 @@ def summarize_sleep(users_records, user, sleep_time, wake_time, quality):
     sleep_time_str = sleep_time.strftime("%H:%M")
     wake_time_str = wake_time.strftime("%H:%M")
 
-    duration_formatted = get_duration(sleep_time, wake_time)
-
-    sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, duration_formatted, quality]]}
-
-    # print('summarize_sleep')
-    # print('users_records')
-    # pprint.pp(users_records)
-    # print('sleep_record')
-    # pprint.pp(sleep_record)
-    # print('user')
-    # pprint.pp(user)
+    sleep_record = {sleep_date_str: [[sleep_time_str, wake_time_str, quality]]}
 
     if user not in users_records:
         users_records[user] = {}
