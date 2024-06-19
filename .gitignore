@@ -2,3 +2,4 @@
 __pycache__
 data_store/user_config.json
 data_store/generated
+data_store/sleep_data
