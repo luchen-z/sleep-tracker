@@ -10,7 +10,7 @@ def main():
 
     while True:
         sleep_info = get_sleep_info()
-        save_sleep_info(sleep_info, user_name, users_records)
+        process_sleep_info(sleep_info, user_name, users_records)
         users_records = save_to_files(users_records)
         pprint.pp(users_records)
 
@@ -21,7 +21,7 @@ def main():
     exit()
 
 
-def save_sleep_info(sleep_info, user_name, users_records):
+def process_sleep_info(sleep_info, user_name, users_records):
     # Save the sleep record(s) in to data structure
     sleep_records = sleep_info[0]
     quality_recorded = sleep_info[1]
